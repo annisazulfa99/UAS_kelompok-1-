@@ -1,17 +1,16 @@
 package com.inventaris.controller;
 
-import com.inventaris.Main;
 import com.inventaris.dao.LaporDAO;
 import com.inventaris.model.Lapor;
 import com.inventaris.util.AlertUtil;
-import com.inventaris.util.LogActivityUtil;
 import com.inventaris.util.SessionManager;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 
 import java.net.URL;
@@ -20,225 +19,270 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 /**
- * Controller Khusus Admin: Mengelola Laporan Masuk
+ * LaporanAdminController - Kelola semua laporan (Admin Only)
  */
 public class LaporanAdminController implements Initializable {
 
-    // --- UI Components ---
+    // ============================================================
+    // FXML COMPONENTS
+    // ============================================================
+    
+    @FXML private ComboBox<String> filterStatusLapor;
+    
     @FXML private TableView<Lapor> allLaporTable;
     @FXML private TableColumn<Lapor, String> colLaporNo;
     @FXML private TableColumn<Lapor, String> colLaporPeminjam;
     @FXML private TableColumn<Lapor, String> colLaporBarang;
+    @FXML private TableColumn<Lapor, String> colLaporInstansi;      // ✅ BARU
+    @FXML private TableColumn<Lapor, String> colLaporKeterangan;    // ✅ BARU
     @FXML private TableColumn<Lapor, LocalDate> colLaporTgl;
     @FXML private TableColumn<Lapor, String> colLaporStatus;
     @FXML private TableColumn<Lapor, Void> colLaporAction;
     
-    @FXML private ComboBox<String> filterStatusLapor;
-    @FXML private TextField txtSearch;
-
-    // --- Buttons Navigasi ---
-    @FXML private Button btnDashboard, btnPeminjaman, btnLaporan, btnBarang, btnUser;
-
-    // --- Tools ---
+    // ============================================================
+    // DEPENDENCIES
+    // ============================================================
+    
     private final LaporDAO laporDAO = new LaporDAO();
     private final SessionManager sessionManager = SessionManager.getInstance();
-
+    
+    // ============================================================
+    // INITIALIZE
+    // ============================================================
+    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Security Check
-        if (!sessionManager.isAdmin()) {
-            AlertUtil.showError("Access Denied", "Hanya admin yang dapat mengakses halaman ini!");
-            Main.showLoginScreen();
-            return;
-        }
-
-        setupTable();
-        setupFilter();
+        setupFilterStatus();
+        setupTableColumns();
         loadAllLaporan();
         
-        System.out.println("✅ Laporan Admin Controller Initialized");
+        System.out.println("✅ LaporanAdminController initialized");
     }
-
+    
     // ============================================================
-    // LOGIKA TABEL & DATA
+    // SETUP METHODS
     // ============================================================
-
-    private void setupTable() {
-        // 1. Setting Kolom Data Biasa
-        colLaporNo.setCellValueFactory(new PropertyValueFactory<>("noLaporan"));
-        colLaporPeminjam.setCellValueFactory(new PropertyValueFactory<>("namaPeminjam"));
-        colLaporBarang.setCellValueFactory(new PropertyValueFactory<>("namaBarang"));
-        colLaporTgl.setCellValueFactory(new PropertyValueFactory<>("tglLaporan"));
-        colLaporStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-
-        // 2. Setting Warna Warni Status
-        colLaporStatus.setCellFactory(col -> new TableCell<>() {
-            @Override protected void updateItem(String status, boolean empty) {
+    
+    /**
+     * Setup filter status combobox
+     */
+    private void setupFilterStatus() {
+        ObservableList<String> statusList = FXCollections.observableArrayList(
+            "Semua Status", "diproses", "selesai", "ditolak"
+        );
+        filterStatusLapor.setItems(statusList);
+        filterStatusLapor.setValue("Semua Status");
+        
+        // Auto-refresh on filter change
+        filterStatusLapor.setOnAction(e -> loadAllLaporan());
+    }
+    
+    /**
+     * Setup table columns
+     */
+    private void setupTableColumns() {
+        colLaporNo.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(cellData.getValue().getNoLaporan()));
+        
+        colLaporPeminjam.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(cellData.getValue().getNamaPeminjam()));
+        
+        colLaporBarang.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(cellData.getValue().getNamaBarang()));
+        
+        // ✅ KOLOM INSTANSI - Parse dari keterangan
+        colLaporInstansi.setCellValueFactory(cellData -> {
+            String keterangan = cellData.getValue().getKeterangan();
+            String instansi = parseInstansi(keterangan);
+            return new SimpleStringProperty(instansi);
+        });
+        
+        // ✅ KOLOM KETERANGAN - Parse dari keterangan
+        colLaporKeterangan.setCellValueFactory(cellData -> {
+            String keterangan = cellData.getValue().getKeterangan();
+            String laporan = parseLaporan(keterangan);
+            return new SimpleStringProperty(laporan);
+        });
+        
+        colLaporTgl.setCellValueFactory(cellData -> 
+            new SimpleObjectProperty<>(cellData.getValue().getTglLaporan()));
+        
+        colLaporStatus.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(cellData.getValue().getStatus()));
+        
+        // Status dengan warna
+        colLaporStatus.setCellFactory(col -> new TableCell<Lapor, String>() {
+            @Override
+            protected void updateItem(String status, boolean empty) {
                 super.updateItem(status, empty);
-                if (empty || status == null) { 
-                    setText(null); setStyle(""); 
+                if (empty || status == null) {
+                    setText(null);
+                    setStyle("");
                 } else {
                     setText(status.toUpperCase());
                     switch (status.toLowerCase()) {
-                        case "diproses": setStyle("-fx-background-color: #fff3cd; -fx-text-fill: #856404; -fx-font-weight: bold;"); break;
-                        case "selesai":  setStyle("-fx-background-color: #d4edda; -fx-text-fill: #155724; -fx-font-weight: bold;"); break;
-                        case "ditolak":  setStyle("-fx-background-color: #f8d7da; -fx-text-fill: #721c24; -fx-font-weight: bold;"); break;
-                        default: setStyle("");
+                        case "diproses":
+                            setStyle("-fx-background-color: #feebc8; -fx-text-fill: #7c2d12; -fx-font-weight: bold;");
+                            break;
+                        case "selesai":
+                            setStyle("-fx-background-color: #c6f6d5; -fx-text-fill: #22543d; -fx-font-weight: bold;");
+                            break;
+                        case "ditolak":
+                            setStyle("-fx-background-color: #fed7d7; -fx-text-fill: #742a2a; -fx-font-weight: bold;");
+                            break;
+                        default:
+                            setStyle("");
                     }
                 }
             }
         });
-
-        colLaporAction.setCellFactory(col -> new TableCell<>() {
-    // Tombol Detail (Warna Biru)
-    private final Button btnDetail = new Button("👁️");
-    // Tombol Selesai (Warna Hijau)
-    private final Button btnSelesai = new Button("✅");
-    // Tombol Tolak (Warna Merah)
-    private final Button btnTolak = new Button("❌");
-
-    // Container Tombol
-    private final HBox pane = new HBox(10, btnDetail, btnSelesai, btnTolak);
-
-    {
-        // Styling
-        btnDetail.setStyle("-fx-background-color: #17a2b8; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;");
-        btnSelesai.setStyle("-fx-background-color: #28a745; -fx-text-fill: white; -fx-cursor: hand;");
-        btnTolak.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white; -fx-cursor: hand;");
         
-        // Setup Aksi
-        btnDetail.setOnAction(e -> {
-            Lapor lapor = getTableView().getItems().get(getIndex());
-            showDetailLaporan(lapor);
-        });
-        btnSelesai.setOnAction(e -> processLapor(getTableView().getItems().get(getIndex()), "selesai"));
-        btnTolak.setOnAction(e -> processLapor(getTableView().getItems().get(getIndex()), "ditolak"));
-        
-        // Debugging: Set background pane kuning biar kelihatan kalau pane ini ada tapi kepotong
-        pane.setStyle("-fx-background-color: transparent; -fx-alignment: center-left;"); 
-    }
-
-    @Override
-    protected void updateItem(Void item, boolean empty) {
-        super.updateItem(item, empty);
-        if (empty) {
-            setGraphic(null);
-        } else {
-            Lapor lapor = getTableView().getItems().get(getIndex());
+        // Action buttons (Selesai / Tolak)
+        colLaporAction.setCellFactory(col -> new TableCell<Lapor, Void>() {
+            private final Button btnSelesai = new Button("✓ Selesai");
+            private final Button btnTolak = new Button("✗ Tolak");
+            private final HBox buttons = new HBox(5, btnSelesai, btnTolak);
             
-            // Logic Tampilan
-            if ("diproses".equalsIgnoreCase(lapor.getStatus())) {
-                // Tampilkan SEMUA tombol (Detail, Selesai, Tolak)
-                pane.getChildren().setAll(btnDetail, btnSelesai, btnTolak);
-                setGraphic(pane);
-            } else {
-                // Tampilkan HANYA tombol Detail
-                pane.getChildren().setAll(btnDetail);
-                setGraphic(pane);
+            {
+                btnSelesai.setStyle("-fx-background-color: #48bb78; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 5;");
+                btnTolak.setStyle("-fx-background-color: #f56565; -fx-text-fill: white; -fx-cursor: hand; -fx-font-weight: bold; -fx-background-radius: 5;");
+                
+                btnSelesai.setOnAction(e -> {
+                    Lapor lapor = getTableView().getItems().get(getIndex());
+                    handleProsesLaporan(lapor, "selesai");
+                });
+                
+                btnTolak.setOnAction(e -> {
+                    Lapor lapor = getTableView().getItems().get(getIndex());
+                    handleProsesLaporan(lapor, "ditolak");
+                });
             }
-        }
+            
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    Lapor lapor = getTableView().getItems().get(getIndex());
+                    // Hanya tampilkan tombol jika status "diproses"
+                    if ("diproses".equalsIgnoreCase(lapor.getStatus())) {
+                        setGraphic(buttons);
+                    } else {
+                        setGraphic(null);
+                    }
+                }
+            }
+        });
     }
-});}
     
-
+    // ============================================================
+    // HELPER METHODS - PARSING
+    // ============================================================
     
     /**
-     * Menampilkan Pop-up Detail Laporan
+     * Parse Instansi dari format: [INSTANSI: nama_instansi]
      */
-    private void showDetailLaporan(Lapor lapor) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Detail Laporan");
-        alert.setHeaderText("Laporan No: " + lapor.getNoLaporan());
-        
-        // Ambil data keterangan (Pastikan model Lapor punya getter ini)
-        String deskripsi = lapor.getKeterangan();
-        if (deskripsi == null || deskripsi.isEmpty()) {
-            deskripsi = "(Tidak ada keterangan dari pelapor)";
+    private String parseInstansi(String keterangan) {
+        if (keterangan != null && keterangan.startsWith("[INSTANSI:")) {
+            try {
+                int start = keterangan.indexOf("[INSTANSI:") + 10;
+                int end = keterangan.indexOf("]");
+                if (end > start) {
+                    return keterangan.substring(start, end).trim();
+                }
+            } catch (Exception e) {
+                return "-";
+            }
         }
-
-        // Format Tampilan
-        String content = 
-                "Pelapor   : " + lapor.getNamaPeminjam() + "\n" +
-                "Barang    : " + lapor.getNamaBarang() + "\n" +
-                "Tanggal   : " + lapor.getTglLaporan() + "\n" +
-                "Status    : " + lapor.getStatus().toUpperCase() + "\n\n" +
-                "===== KETERANGAN / KELUHAN =====" + "\n" + 
-                deskripsi;
-
-        // Pakai TextArea agar bisa di-scroll jika teks panjang
-        TextArea area = new TextArea(content);
-        area.setEditable(false);
-        area.setWrapText(true);
-        area.setMaxWidth(Double.MAX_VALUE);
-        area.setMaxHeight(Double.MAX_VALUE);
-        area.setPrefRowCount(10); // Tinggi area teks
-
-        alert.getDialogPane().setContent(area);
-        alert.showAndWait();
+        return "-";
     }
     
+    /**
+     * Parse Laporan dari format: LAPORAN: isi_laporan
+     */
+    private String parseLaporan(String keterangan) {
+        if (keterangan != null && keterangan.contains("LAPORAN:")) {
+            try {
+                int start = keterangan.indexOf("LAPORAN:") + 8;
+                return keterangan.substring(start).trim();
+            } catch (Exception e) {
+                return keterangan;
+            }
+        }
+        return keterangan != null ? keterangan : "-";
+    }
     
+    // ============================================================
+    // DATA LOADING
+    // ============================================================
+    
+    /**
+     * Load all laporan (dengan filter status)
+     */
     private void loadAllLaporan() {
         try {
-            List<Lapor> list = laporDAO.getAll();
-
-            // Filter Dropdown
-            if (filterStatusLapor != null && filterStatusLapor.getValue() != null && 
-                !"Semua".equals(filterStatusLapor.getValue())) {
-                String filter = filterStatusLapor.getValue().toLowerCase();
-                list.removeIf(l -> !l.getStatus().equalsIgnoreCase(filter));
+            List<Lapor> laporList = laporDAO.getAll();
+            
+            // Filter berdasarkan status yang dipilih
+            String selectedStatus = filterStatusLapor.getValue();
+            if (selectedStatus != null && !"Semua Status".equals(selectedStatus)) {
+                laporList.removeIf(l -> !selectedStatus.equalsIgnoreCase(l.getStatus()));
             }
-
-            // Filter Search Text
-            if (txtSearch != null && !txtSearch.getText().isEmpty()) {
-                String keyword = txtSearch.getText().toLowerCase();
-                list.removeIf(l -> 
-                    !l.getNoLaporan().toLowerCase().contains(keyword) &&
-                    !l.getNamaPeminjam().toLowerCase().contains(keyword) &&
-                    !l.getNamaBarang().toLowerCase().contains(keyword)
-                );
-            }
-
-            allLaporTable.setItems(FXCollections.observableArrayList(list));
+            
+            ObservableList<Lapor> observableList = FXCollections.observableArrayList(laporList);
+            allLaporTable.setItems(observableList);
+            
+            System.out.println("✅ Loaded " + laporList.size() + " laporan");
+            
         } catch (Exception e) {
-            AlertUtil.showError("Error", "Gagal memuat data laporan: " + e.getMessage());
+            AlertUtil.showError("Error", "Gagal memuat data laporan!");
+            e.printStackTrace();
         }
     }
-
-    private void processLapor(Lapor lapor, String newStatus) {
-        String actionName = "selesai".equals(newStatus) ? "Menyelesaikan" : "Menolak";
+    
+    // ============================================================
+    // EVENT HANDLERS
+    // ============================================================
+    
+    /**
+     * Handle proses laporan (selesai/ditolak)
+     */
+    private void handleProsesLaporan(Lapor lapor, String status) {
+        String action = "selesai".equals(status) ? "menyelesaikan" : "menolak";
         
-        if (!AlertUtil.showConfirmation("Konfirmasi", "Yakin ingin " + actionName + " laporan ini?")) {
+        if (!AlertUtil.showConfirmation("Konfirmasi", 
+            "Yakin " + action + " laporan ini?\n\n" +
+            "No. Laporan: " + lapor.getNoLaporan() + "\n" +
+            "Peminjam: " + lapor.getNamaPeminjam() + "\n" +
+            "Barang: " + lapor.getNamaBarang())) {
             return;
         }
-
-        if (laporDAO.updateStatus(lapor.getIdLaporan(), newStatus)) {
-            AlertUtil.showSuccess("Sukses", "Laporan berhasil diupdate menjadi: " + newStatus);
+        
+        if (laporDAO.updateStatus(lapor.getIdLaporan(), status)) {
+            AlertUtil.showSuccess("Berhasil", "Status laporan berhasil diupdate!");
             
-            LogActivityUtil.log(
+            // Log activity
+            com.inventaris.util.LogActivityUtil.log(
                 sessionManager.getCurrentUsername(),
-                actionName + " Laporan: " + lapor.getNoLaporan(),
-                "PROCESS_LAPORAN",
+                action + " laporan: " + lapor.getNoLaporan(),
+                "UPDATE_LAPORAN",
                 sessionManager.getCurrentRole()
             );
             
-            loadAllLaporan(); // Refresh table
+            loadAllLaporan(); // Refresh
+            
         } else {
-            AlertUtil.showError("Gagal", "Gagal mengupdate status database.");
+            AlertUtil.showError("Gagal", "Gagal mengupdate status laporan!");
         }
     }
-
-    private void setupFilter() {
-        filterStatusLapor.setItems(FXCollections.observableArrayList(
-            "Semua", "Diproses", "Selesai", "Ditolak"
-        ));
-        filterStatusLapor.setValue("Semua");
-        filterStatusLapor.setOnAction(e -> loadAllLaporan());
-    }
-
-    // ============================================================
-    // NAVIGASI
-    // ============================================================
-
     
+    /**
+     * Handle refresh button
+     */
+    @FXML
+    private void handleRefresh() {
+        loadAllLaporan();
+        AlertUtil.showInfo("Refresh", "Data berhasil diperbarui!");
+    }
 }
