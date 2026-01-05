@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<!--
+================================================================
+File: src/main/resources/fxml/Laporan.fxml
+Laporan &amp; Statistik Screen
+================================================================
+-->
+<BorderPane
+    fx:id="rootPane"
+    xmlns="http://javafx.com/javafx"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.inventaris.controller.LaporanController">
+<VBox spacing="20" style="-fx-padding: 30; -fx-background-color: #f7fafc;">
+    <HBox spacing="30" alignment="CENTER_LEFT">
+                <Label fx:id="lblSimak" text="SIMAK"
+                       onMouseClicked="#handleDashboard"
+                       style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: #6A5436; -fx-cursor: hand;"/>
+
+                <TextField fx:id="txtSearch" promptText="pencarian"
+               prefHeight="40" prefWidth="800"
+               style="-fx-background-color: #D9CBC1; -fx-background-radius: 10; -fx-font-size: 16px; -fx-padding: 10;" />
+
+    <Button text="🔍 Cari" onAction="#handleSearch"
+
+            style="-fx-background-color: #8C6E63; -fx-text-fill: white; -fx-background-radius: 10;" />
+            </HBox>
+    
+    
+    <!-- NAVIGATION -->
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <Button fx:id="btnDashboard" text="Dashboard"
+                        onAction="#handleHome"
+                        style="-fx-background-color: #D9CBC1; -fx-background-radius: 25;
+                               -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;"
+                        prefWidth="180" prefHeight="50"/>
+
+                <Button fx:id="btnPeminjaman" text="Peminjaman"
+                        onAction="#handlePeminjaman"
+                        style="-fx-background-color: #D9CBC1; -fx-background-radius: 25;
+                               -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;"
+                        prefWidth="180" prefHeight="50"/>
+
+                <Button fx:id="btnLaporan" text="Laporan"
+                        onAction="#handleLaporan"
+                        style="-fx-background-color: #D9CBC1; -fx-background-radius: 25;
+                               -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;"
+                        prefWidth="180" prefHeight="50"/>
+
+                <Button fx:id="btnBarang" text="Data Barang"
+                        onAction="#handleBarang"
+                        style="-fx-background-color: #D9CBC1; -fx-background-radius: 25;
+                               -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;"
+                        prefWidth="180" prefHeight="50"/>
+                <Button fx:id="btnUser" text="Kelola"
+                        onAction="#handleUser"
+                        style="-fx-background-color: #D9CBC1; -fx-background-radius: 25;
+                               -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;"
+                        prefWidth="180" prefHeight="50"/>
+                <Button text="🔄 Refresh" onAction="#handleRefresh" styleClass="btn-secondary" />
+            </HBox>
+   
+    
+    <Separator />
+    
+    <!-- Statistics Cards -->
+    <GridPane hgap="15" vgap="15">
+        <columnConstraints>
+            <ColumnConstraints percentWidth="20" />
+            <ColumnConstraints percentWidth="20" />
+            <ColumnConstraints percentWidth="20" />
+            <ColumnConstraints percentWidth="20" />
+            <ColumnConstraints percentWidth="20" />
+        </columnConstraints>
+        
+        <!-- Total Peminjaman -->
+        <VBox styleClass="stat-card" spacing="8" GridPane.columnIndex="0">
+            <Label text="📦 Total Peminjaman" styleClass="stat-label" />
+            <Label fx:id="totalPeminjamanLabel" text="0" styleClass="stat-value" 
+                   style="-fx-text-fill: #667eea;" />
+        </VBox>
+        
+        <!-- Aktif -->
+        <VBox styleClass="stat-card" spacing="8" GridPane.columnIndex="1">
+            <Label text="🔄 Aktif" styleClass="stat-label" />
+            <Label fx:id="aktifLabel" text="0" styleClass="stat-value" 
+                   style="-fx-text-fill: #ed8936;" />
+        </VBox>
+        
+        <!-- Selesai -->
+        <VBox styleClass="stat-card" spacing="8" GridPane.columnIndex="2">
+            <Label text="✓ Selesai" styleClass="stat-label" />
+            <Label fx:id="selesaiLabel" text="0" styleClass="stat-value" 
+                   style="-fx-text-fill: #48bb78;" />
+        </VBox>
+        
+        <!-- Terlambat -->
+        <VBox styleClass="stat-card" spacing="8" GridPane.columnIndex="3">
+            <Label text="⚠️ Terlambat" styleClass="stat-label" />
+            <Label fx:id="terlambatLabel" text="0" styleClass="stat-value" 
+                   style="-fx-text-fill: #f56565;" />
+        </VBox>
+        
+        <!-- Total Laporan -->
+        <VBox styleClass="stat-card" spacing="8" GridPane.columnIndex="4">
+            <Label text="📋 Total Laporan" styleClass="stat-label" />
+            <Label fx:id="totalLaporanLabel" text="0" styleClass="stat-value" 
+                   style="-fx-text-fill: #9f7aea;" />
+        </VBox>
+    </GridPane>
+    
+    <!-- Main Content -->
+    <HBox spacing="20" VBox.vgrow="ALWAYS">
+        
+        <!-- Left Panel - Form Laporan -->
+        <VBox spacing="15" styleClass="card" prefWidth="400" style="-fx-padding: 25;">
+            <Label text="Buat Laporan Baru" styleClass="card-title">
+                <font><Font name="System Bold" size="18.0" /></font>
+            </Label>
+            
+            <Separator />
+            
+            <!-- Pilih Peminjaman -->
+            <VBox spacing="5">
+                <Label text="Pilih Peminjaman *" styleClass="field-label" />
+                <ComboBox fx:id="peminjamanCombo" maxWidth="Infinity" prefHeight="35" 
+                         promptText="Pilih peminjaman yang bermasalah" />
+                <Label text="Hanya peminjaman aktif yang ditampilkan" 
+                       style="-fx-text-fill: #718096; -fx-font-size: 11px; -fx-font-style: italic;" />
+            </VBox>
+            
+            <!-- Keterangan -->
+            <VBox spacing="5">
+                <Label text="Keterangan Laporan *" styleClass="field-label" />
+                <TextArea fx:id="keteranganArea" 
+                         promptText="Jelaskan kondisi/masalah yang terjadi..." 
+                         prefRowCount="8" wrapText="true" />
+            </VBox>
+            
+            <Separator />
+            
+            <!-- Submit Button -->
+            <Button fx:id="btnLapor" text="📤 Kirim Laporan" onAction="#handleLapor" 
+                   styleClass="btn-danger" prefHeight="45" maxWidth="Infinity">
+                <font><Font name="System Bold" size="14.0" /></font>
+            </Button>
+            
+            <Label text="* Wajib diisi" 
+                   style="-fx-text-fill: #718096; -fx-font-size: 12px;" />
+            
+            <!-- Info Box -->
+            <VBox spacing="8" style="-fx-padding: 15; -fx-background-color: #fff5f5; -fx-background-radius: 8;">
+                <Label text="⚠️ Penting" style="-fx-font-weight: bold; -fx-text-fill: #742a2a;" />
+                <Label text="Laporan digunakan untuk melaporkan:" wrapText="true" 
+                       style="-fx-text-fill: #2d3748; -fx-font-size: 12px;" />
+                <Label text="• Barang rusak/hilang" wrapText="true" 
+                       style="-fx-text-fill: #2d3748; -fx-font-size: 12px;" />
+                <Label text="• Kondisi tidak sesuai" wrapText="true" 
+                       style="-fx-text-fill: #2d3748; -fx-font-size: 12px;" />
+                <Label text="• Masalah lainnya" wrapText="true" 
+                       style="-fx-text-fill: #2d3748; -fx-font-size: 12px;" />
+            </VBox>
+            
+        </VBox>
+        
+        <!-- Right Panel - Table Laporan -->
+        <VBox spacing="15" styleClass="card" HBox.hgrow="ALWAYS" style="-fx-padding: 25;">
+            <Label text="Daftar Laporan" styleClass="card-title">
+                <font><Font name="System Bold" size="18.0" /></font>
+            </Label>
+            
+            <Separator />
+            
+            <TableView fx:id="laporTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colNoLaporan" text="No. Laporan" prefWidth="120" />
+                    <TableColumn fx:id="colPeminjam" text="Peminjam" prefWidth="150" />
+                    <TableColumn fx:id="colBarang" text="Barang" prefWidth="180" />
+                    <TableColumn fx:id="colTglLaporan" text="Tgl Laporan" prefWidth="100" />
+                    <TableColumn fx:id="colStatus" text="Status" prefWidth="100" />
+                    <TableColumn fx:id="colAction" text="Aksi" prefWidth="150" />
+                </columns>
+                <placeholder>
+                    <Label text="Belum ada laporan" style="-fx-text-fill: #a0aec0;" />
+                </placeholder>
+            </TableView>
+            
+            <!-- Legend -->
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <Label text="Status:" style="-fx-font-weight: bold; -fx-text-fill: #2d3748;" />
+                <HBox spacing="5" alignment="CENTER">
+                    <Label text="●" style="-fx-text-fill: #ed8936; -fx-font-size: 16px;" />
+                    <Label text="Diproses" style="-fx-text-fill: #718096; -fx-font-size: 12px;" />
+                </HBox>
+                <HBox spacing="5" alignment="CENTER">
+                    <Label text="●" style="-fx-text-fill: #48bb78; -fx-font-size: 16px;" />
+                    <Label text="Selesai" style="-fx-text-fill: #718096; -fx-font-size: 12px;" />
+                </HBox>
+                <HBox spacing="5" alignment="CENTER">
+                    <Label text="●" style="-fx-text-fill: #f56565; -fx-font-size: 16px;" />
+                    <Label text="Ditolak" style="-fx-text-fill: #718096; -fx-font-size: 12px;" />
+                </HBox>
+            </HBox>
+            
+        </VBox>
+        
+    </HBox>
+    
+</VBox>
+</BorderPane>

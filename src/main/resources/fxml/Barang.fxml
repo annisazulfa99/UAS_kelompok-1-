@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<!--
+================================================================
+File: src/main/resources/fxml/Barang.fxml
+Manage Barang (CRUD) Screen
+================================================================
+-->
+<ScrollPane 
+    xmlns="http://javafx.com/javafx"
+    xmlns:fx="http://javafx.com/fxml/1"
+    fx:controller="com.inventaris.controller.BarangController"
+    fitToWidth="true" pannable="true" hbarPolicy="AS_NEEDED">
+
+    <VBox spacing="20" style="-fx-padding: 30; -fx-background-color: #f7fafc;">
+
+    
+    <HBox spacing="30" alignment="CENTER_LEFT">
+                <Label fx:id="lblSimak" text="SIMAK"
+                       onMouseClicked="#handleDashboard"
+                       style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: #6A5436; -fx-cursor: hand;"/>
+
+                <TextField fx:id="searchField" promptText="pencarian"
+               prefHeight="40" prefWidth="800"
+               style="-fx-background-color: #D9CBC1; -fx-background-radius: 10; -fx-font-size: 16px; -fx-padding: 10;" />
+
+    <Button text="🔍 Cari" onAction="#handleSearch"
+            style="-fx-background-color: #8C6E63; -fx-text-fill: white; -fx-background-radius: 10;" />
+            </HBox>
+      <!-- NAVIGATION -->
+            <HBox spacing="20" alignment="CENTER_LEFT">
+                <Button fx:id="btnDashboard" text="Dashboard"
+                        onAction="#handleHome"
+                        style="-fx-background-color: #D9CBC1; -fx-background-radius: 25;
+                               -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;"
+                        prefWidth="180" prefHeight="50"/>
+
+                <Button fx:id="btnPeminjaman" text="Peminjaman"
+                        onAction="#handlePeminjaman"
+                        style="-fx-background-color: #D9CBC1; -fx-background-radius: 25;
+                               -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;"
+                        prefWidth="180" prefHeight="50"/>
+
+                <Button fx:id="btnLaporan" text="Laporan"
+                        onAction="#handleLaporan"
+                        style="-fx-background-color: #D9CBC1; -fx-background-radius: 25;
+                               -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;"
+                        prefWidth="180" prefHeight="50"/>
+
+                <Button fx:id="btnBarang" text="Data Barang"
+                        onAction="#handleBarang"
+                        style="-fx-background-color: #D9CBC1; -fx-background-radius: 25;
+                               -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;"
+                        prefWidth="180" prefHeight="50"/>
+                <Button fx:id="btnUser" text="Kelola"
+                        onAction="#handleUser"
+                        style="-fx-background-color: #D9CBC1; -fx-background-radius: 25;
+                               -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;"
+                        prefWidth="180" prefHeight="50"/>
+            </HBox>
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="20">
+        <Label text="Data Barang" styleClass="header-title">
+            <font><Font name="System Bold" size="24.0" /></font>
+        </Label>
+        
+        <Region HBox.hgrow="ALWAYS" />
+        
+        <!-- Search Field -->
+        
+    </HBox>
+    
+    <Separator />
+    
+    <!-- Main Content -->
+    <HBox spacing="20" VBox.vgrow="ALWAYS">
+        
+        <!-- Form Panel (Left) -->
+        <VBox spacing="15" styleClass="card" prefWidth="400" style="-fx-padding: 25;">
+            <Label text="Form Barang" styleClass="card-title">
+                <font><Font name="System Bold" size="18.0" /></font>
+            </Label>
+            
+            <Separator />
+            
+            <!-- Kode Barang -->
+            <VBox spacing="5">
+                <Label text="Kode Barang *" styleClass="field-label" />
+                <TextField fx:id="kodeBarangField" promptText="Contoh: BRG-001" />
+            </VBox>
+            
+            <!-- Nama Barang -->
+            <VBox spacing="5">
+                <Label text="Nama Barang *" styleClass="field-label" />
+                <TextField fx:id="namaBarangField" promptText="Nama barang" />
+            </VBox>
+            
+            <!-- Lokasi -->
+            <VBox spacing="5">
+                <Label text="Lokasi" styleClass="field-label" />
+                <TextField fx:id="lokasiField" promptText="Lokasi penyimpanan" />
+            </VBox>
+            
+            <!-- Jumlah Total & Tersedia -->
+            <HBox spacing="10">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Jumlah Total *" styleClass="field-label" />
+                    <TextField fx:id="jumlahTotalField" promptText="0" />
+                </VBox>
+                
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Tersedia *" styleClass="field-label" />
+                    <TextField fx:id="jumlahTersediaField" promptText="0" />
+                </VBox>
+            </HBox>
+            
+            <!-- Instansi Pemilik -->
+            <VBox spacing="5">
+                <Label text="Instansi Pemilik" styleClass="field-label" />
+                <ComboBox fx:id="instansiCombo" maxWidth="Infinity" promptText="Pilih instansi" />
+                <Label text="Pilih 'Umum' jika tidak ada pemilik spesifik" 
+                       style="-fx-text-fill: #7f8c8d; -fx-font-size: 11px; -fx-font-style: italic;" />
+            </VBox>
+
+
+            <!-- Kondisi & Status -->
+            <HBox spacing="10">
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Kondisi" styleClass="field-label" />
+                    <ComboBox fx:id="kondisiCombo" maxWidth="Infinity" />
+                </VBox>
+                
+                <VBox spacing="5" HBox.hgrow="ALWAYS">
+                    <Label text="Status" styleClass="field-label" />
+                    <ComboBox fx:id="statusCombo" maxWidth="Infinity" />
+                </VBox>
+            </HBox>
+            
+            <!-- Deskripsi -->
+            <VBox spacing="5">
+                <Label text="Deskripsi" styleClass="field-label" />
+                <TextArea fx:id="deskripsiArea" promptText="Deskripsi barang" 
+                         prefRowCount="3" wrapText="true" />
+            </VBox>
+            
+            <Separator />
+            
+            <!-- Action Buttons -->
+            <HBox spacing="10">
+                <Button fx:id="btnSave" text="💾 Simpan" onAction="#handleSave" 
+                       styleClass="btn-success" prefHeight="40" HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnUpdate" text="✏️ Update" onAction="#handleUpdate" 
+                       styleClass="btn-primary" prefHeight="40" HBox.hgrow="ALWAYS" />
+            </HBox>
+            
+            <HBox spacing="10">
+                <Button fx:id="btnDelete" text="🗑️ Hapus" onAction="#handleDelete" 
+                       styleClass="btn-danger" prefHeight="40" HBox.hgrow="ALWAYS" />
+                <Button fx:id="btnClear" text="🔄 Clear" onAction="#handleClear" 
+                       styleClass="btn-secondary" prefHeight="40" HBox.hgrow="ALWAYS" />
+            </HBox>
+            
+            <Label text="* Wajib diisi" style="-fx-text-fill: #718096; -fx-font-size: 12px;" />
+        </VBox>
+        
+        <!-- Table Panel (Right) -->
+        <VBox spacing="15" styleClass="card" HBox.hgrow="ALWAYS" style="-fx-padding: 25;">
+            <Label text="Daftar Barang" styleClass="card-title">
+                <font><Font name="System Bold" size="18.0" /></font>
+            </Label>
+            
+            <Separator />
+            
+            <TableView fx:id="barangTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colKode" text="Kode" prefWidth="100" />
+                    <TableColumn fx:id="colNama" text="Nama Barang" prefWidth="180" />
+                    <TableColumn fx:id="colLokasi" text="Lokasi" prefWidth="120" />
+                    <TableColumn fx:id="colTotal" text="Total" prefWidth="70" />
+                    <TableColumn fx:id="colTersedia" text="Tersedia" prefWidth="70" />
+                    <TableColumn fx:id="colKondisi" text="Kondisi" prefWidth="100" />
+                    <TableColumn fx:id="colStatus" text="Status" prefWidth="100" />
+                    <TableColumn fx:id="colPemilik" text="Pemilik" prefWidth="150" />
+
+                </columns>
+                <placeholder>
+                    <Label text="Belum ada data barang" style="-fx-text-fill: #a0aec0;" />
+                </placeholder>
+            </TableView>
+            
+            <Label text="Klik baris tabel untuk edit/hapus" 
+                   style="-fx-text-fill: #718096; -fx-font-size: 12px; -fx-font-style: italic;" />
+        </VBox>
+        
+    </HBox>
+    
+</VBox>
+</ScrollPane>

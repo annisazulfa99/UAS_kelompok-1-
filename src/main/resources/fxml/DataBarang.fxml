@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane style="-fx-background-color: #F5E6D3;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.inventaris.controller.DataBarangPeminjamController">
+
+    <left>
+        <!-- ✅ ADDED: fx:id="filterSidebar" -->
+        <ScrollPane fx:id="filterSidebar" fitToWidth="true" style="-fx-background: #6A5436; -fx-background-color: #6A5436; -fx-padding: 0;">
+            <content>
+                <VBox spacing="15" style="-fx-background-color: #6A5436; -fx-padding: 20; -fx-pref-width: 260;">
+                    
+                    <Label style="-fx-text-fill: white; -fx-font-size: 22px; -fx-font-weight: bold; -fx-underline: true;" text="Filter Data Barang">
+                        <VBox.margin>
+                            <Insets bottom="10" />
+                        </VBox.margin>
+                    </Label>
+
+                    <VBox spacing="5">
+                        <Label text="LEMBAGA" style="-fx-text-fill: #D9CBC1; -fx-font-weight: bold; -fx-font-size: 12px;"/>
+                        <ComboBox fx:id="filterLembaga" maxWidth="Infinity" prefHeight="40" promptText="Semua Lembaga" 
+                                  style="-fx-background-color: #D9CBC1; -fx-background-radius: 8; -fx-font-size: 14px;" />
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="BEM" style="-fx-text-fill: #D9CBC1; -fx-font-weight: bold; -fx-font-size: 12px;"/>
+                        <ComboBox fx:id="filterBEM" maxWidth="Infinity" prefHeight="40" promptText="Semua BEM" 
+                                  style="-fx-background-color: #D9CBC1; -fx-background-radius: 8; -fx-font-size: 14px;" />
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="HIMPUNAN" style="-fx-text-fill: #D9CBC1; -fx-font-weight: bold; -fx-font-size: 12px;"/>
+                        <ComboBox fx:id="filterHimpunan" maxWidth="Infinity" prefHeight="40" promptText="Semua Himpunan" 
+                                  style="-fx-background-color: #D9CBC1; -fx-background-radius: 8; -fx-font-size: 14px;" />
+                    </VBox>
+
+                    <VBox spacing="5">
+                        <Label text="UKM" style="-fx-text-fill: #D9CBC1; -fx-font-weight: bold; -fx-font-size: 12px;"/>
+                        <ComboBox fx:id="filterUKM" maxWidth="Infinity" prefHeight="40" promptText="Semua UKM" 
+                                  style="-fx-background-color: #D9CBC1; -fx-background-radius: 8; -fx-font-size: 14px;" />
+                    </VBox>
+
+                    <Separator style="-fx-opacity: 0.5;">
+                        <VBox.margin>
+                            <Insets top="10" bottom="10" />
+                        </VBox.margin>
+                    </Separator>
+
+                    <Button onAction="#handleApplyFilter" maxWidth="Infinity" prefHeight="40" 
+                            style="-fx-background-color: #8B6F47; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand; -fx-font-weight: bold;" 
+                            text="🔍 Terapkan Filter" />
+
+                    <Button onAction="#handleResetFilter" maxWidth="Infinity" prefHeight="40" 
+                            style="-fx-background-color: #5D4037; -fx-text-fill: white; -fx-background-radius: 8; -fx-cursor: hand;" 
+                            text="🔄 Reset Filter" />
+
+                    <Region VBox.vgrow="ALWAYS" />
+
+                    <VBox style="-fx-background-color: rgba(0,0,0,0.2); -fx-background-radius: 10; -fx-padding: 15;">
+                        <Label style="-fx-text-fill: #D9CBC1; -fx-font-size: 12px;" text="Total Barang Tersedia" />
+                        <Label fx:id="lblTotalBarang" style="-fx-text-fill: white; -fx-font-size: 24px; -fx-font-weight: bold;" text="0" />
+                    </VBox>
+
+                </VBox>
+            </content>
+        </ScrollPane>
+    </left>
+
+    <center>
+        <ScrollPane fitToWidth="true" fitToHeight="true" style="-fx-background-color: transparent;">
+            <VBox spacing="20" style="-fx-padding: 30; -fx-background-color: #F5E6D3;">
+
+                <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 2);">
+                    <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Urutkan:" />
+                    <ComboBox fx:id="sortCombo" prefWidth="180" style="-fx-background-color: #F0F0F0; -fx-background-radius: 5;" />
+                    
+                    <Region HBox.hgrow="ALWAYS" />
+                    
+                    <Label fx:id="lblResultCount" style="-fx-text-fill: #666; -fx-font-size: 14px;" text="Menampilkan 0 barang" />
+                    
+                    <!-- ✅ NEW: Container untuk tombol aksi instansi -->
+                    <HBox fx:id="actionButtonContainer" alignment="CENTER_RIGHT" spacing="10">
+                        <!-- Button "+ Tambah Barang Baru" akan muncul di sini untuk instansi -->
+                    </HBox>
+                    
+                    <!-- ✅ ADDED: fx:id="cartContainer" - Container Keranjang (disembunyikan untuk instansi) -->
+                    <HBox fx:id="cartContainer" alignment="CENTER" style="-fx-background-color: #6A5436; -fx-background-radius: 20; -fx-padding: 5 15; -fx-cursor: hand;" onMouseClicked="#handlePeminjaman">
+                        <Label text="🛒 Keranjang " style="-fx-text-fill: white; -fx-font-weight: bold;"/>
+                        <Label fx:id="cartBadge" text="0" style="-fx-text-fill: #FFD700; -fx-font-weight: bold;"/>
+                    </HBox>
+                </HBox>
+
+                <FlowPane fx:id="catalogGrid" hgap="20" vgap="20" alignment="TOP_LEFT" prefWrapLength="800" />
+
+                <VBox fx:id="emptyState" alignment="CENTER" spacing="10" visible="false" managed="false" VBox.vgrow="ALWAYS">
+                    <Label style="-fx-font-size: 64px;" text="📦" />
+                    <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #6A5436;" text="Barang tidak ditemukan" />
+                    <Label style="-fx-text-fill: #888;" text="Coba ubah kata kunci pencarian atau reset filter." />
+                    <Button text="Reset Filter" onAction="#handleResetFilter" style="-fx-background-color: #6A5436; -fx-text-fill: white; -fx-background-radius: 20; -fx-padding: 8 20; -fx-cursor: hand;"/>
+                </VBox>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

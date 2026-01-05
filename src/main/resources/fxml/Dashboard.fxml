@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="rootPane" 
+            prefHeight="768.0" 
+            prefWidth="1366.0" 
+            style="-fx-background-color: #F4F6F8;" 
+            xmlns="http://javafx.com/javafx/21" 
+            xmlns:fx="http://javafx.com/fxml/1" 
+            fx:controller="com.inventaris.controller.HomeController">
+
+    <top>
+        <VBox spacing="5.0" style="-fx-background-color: #FFFFFF; -fx-border-color: transparent transparent #E0E0E0 transparent;">
+            <padding>
+                <Insets bottom="20.0" left="30.0" right="30.0" top="20.0" />
+            </padding>
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="10.0">
+                    <children>
+                        <Label text="Dashboard Inventaris">
+                            <font>
+                                <Font name="Segoe UI Bold" size="28.0" />
+                            </font>
+                        </Label>
+                    </children>
+                </HBox>
+                <Label text="Monitoring statistik peminjaman barang per instansi secara real-time" textFill="#757575">
+                    <font>
+                        <Font name="Segoe UI" size="14.0" />
+                    </font>
+                </Label>
+            </children>
+            <effect>
+                <DropShadow height="10.0" radius="4.5" width="10.0">
+                    <color>
+                        <Color opacity="0.1" />
+                    </color>
+                </DropShadow>
+            </effect>
+        </VBox>
+    </top>
+
+    <center>
+        <ScrollPane fx:id="scrollPane" 
+                    fitToWidth="true" 
+                    pannable="true" 
+                    style="-fx-background: #F4F6F8; -fx-background-color: transparent; -fx-padding: 0;">
+            
+            <content>
+                <FlowPane fx:id="chartContainer" 
+                          alignment="TOP_CENTER" 
+                          hgap="25.0" 
+                          vgap="25.0" 
+                          style="-fx-background-color: #F4F6F8;">
+                    <padding>
+                        <Insets bottom="40.0" left="30.0" right="30.0" top="30.0" />
+                    </padding>
+                    
+                    </FlowPane>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

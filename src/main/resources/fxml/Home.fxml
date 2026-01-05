@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="rootPane" prefHeight="700.0" prefWidth="1200.0" style="-fx-background-color: #FDFBF7;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.inventaris.controller.DashboardController">
+
+    <center>
+        <ScrollPane fitToWidth="true" hbarPolicy="NEVER" pannable="true" style="-fx-background-color: transparent; -fx-background: #FDFBF7;">
+            <content>
+                <VBox spacing="30">
+                    
+                    <VBox alignment="CENTER_LEFT" style="-fx-background-color: #6A5436; -fx-background-radius: 0 0 30 30;">
+                        <padding>
+                            <Insets bottom="40.0" left="50.0" right="50.0" top="40.0" />
+                        </padding>
+                        <effect>
+                            <DropShadow height="20.0" radius="9.5" width="20.0">
+                                <color>
+                                    <Color opacity="0.2" />
+                                </color>
+                            </DropShadow>
+                        </effect>
+                        
+                        <Label text="Selamat Datang di SIMAK" textFill="WHITE">
+                            <font>
+                                <Font name="Segoe UI Bold" size="32.0" />
+                            </font>
+                        </Label>
+                        <Label text="Sistem Informasi Manajemen Aset &amp; Inventaris Kampus" textFill="#e0d6cc">
+                            <font>
+                                <Font name="Segoe UI" size="16.0" />
+                            </font>
+                        </Label>
+                    </VBox>
+
+                    <VBox spacing="40" style="-fx-padding: 20 50;">
+    
+                            <VBox fx:id="sectionBerita" spacing="15"> 
+
+                                <HBox alignment="CENTER_LEFT" spacing="10">
+                                    <Label style="-fx-font-size: 24px;" text="📰" /> 
+                                    <Label text="Berita &amp; Pengumuman" textFill="#6A5436">
+                                        <font>
+                                            <Font name="Segoe UI Bold" size="24.0" />
+                                        </font>
+                                    </Label>
+                                </HBox>
+
+                                <HBox fx:id="beritaContainer" alignment="CENTER_LEFT" spacing="20">
+                                </HBox>
+                            </VBox>
+
+                            <Region prefHeight="1" style="-fx-background-color: #E0E0E0;" />
+
+                        <VBox fx:id="rekomendasiSection" spacing="15">
+                            
+                            <HBox alignment="CENTER_LEFT" spacing="10">
+                                <Label style="-fx-font-size: 24px;" text="✨" />
+                                <VBox>
+                                    <Label text="Rekomendasi Pilihan" textFill="#6A5436">
+                                        <font>
+                                            <Font name="Segoe UI Bold" size="24.0" />
+                                        </font>
+                                    </Label>
+                                    <Label text="Barang yang paling sering dipinjam bulan ini" textFill="#8D6E63">
+                                        <font>
+                                            <Font name="Segoe UI Italic" size="14.0" />
+                                        </font>
+                                    </Label>
+                                </VBox>
+                            </HBox>
+
+                            <HBox fx:id="rekomendasiContainer" alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 10 0;">
+                                </HBox>
+                            
+                        </VBox>
+                        
+                        <Region prefHeight="50" /> </VBox>
+                </VBox>
+            </content>
+        </ScrollPane>
+    </center>
+
+</BorderPane>

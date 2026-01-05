@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<actions>
+    <action>
+        <actionName>run</actionName>
+        <goals>
+            <goal>clean</goal>
+            <goal>compile</goal>
+            <goal>exec:java</goal>
+        </goals>
+        <properties>
+            <exec.mainClass>com.inventaris.Main</exec.mainClass>
+            <exec.vmArgs>
+                --module-path "${project.build.directory}/../dependency"
+                --add-modules javafx.controls,javafx.fxml
+            </exec.vmArgs>
+        </properties>
+    </action>
+</actions>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.shape.Circle?>
+
+<BorderPane fx:id="rootPane" prefHeight="700.0" prefWidth="1200.0" style="-fx-background-color: #F5E6D3;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.inventaris.controller.LayoutController">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 20; -fx-background-color: #765834;">
+            <Circle fx:id="profileImage" fill="white" radius="25" />
+
+            <VBox spacing="3">
+                <Label fx:id="welcomeLabel" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;" text="Halo, Budi Santoso" />
+                <Label fx:id="roleLabel" style="-fx-text-fill: white;" text="Peminjam" />
+            </VBox>
+
+            <Pane HBox.hgrow="ALWAYS" />
+
+            <Label onMouseClicked="#handleLogout" style="-fx-text-fill: white; -fx-cursor: hand;" text="Log out" />
+        </HBox>
+    </top>
+
+    <center>
+        <ScrollPane fitToHeight="true" fitToWidth="true" pannable="true" style="-fx-background-color: #F5E6D3; -fx-background: #F5E6D3;">
+            <VBox spacing="20" style="-fx-padding: 30; -fx-background-color: #F5E6D3;">
+
+                <HBox alignment="CENTER_LEFT" spacing="10">
+    <Label fx:id="lblSimak" onMouseClicked="#handleHome" style="-fx-font-size: 48px; -fx-font-weight: bold; -fx-text-fill: #6A5436; -fx-cursor: hand;" text="SIMAK" />
+   
+                   <HBox alignment="CENTER_LEFT" spacing="20" HBox.hgrow="ALWAYS">
+                    <Button fx:id="btnDashboard" maxWidth="Infinity" onAction="#handleDashboard" prefHeight="50" style="-fx-background-color: #D9CBC1; -fx-background-radius: 25; -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;" text="Dashboard" HBox.hgrow="ALWAYS" />
+
+                    <Button fx:id="btnPeminjaman" maxWidth="Infinity" onAction="#handlePeminjaman" prefHeight="50" style="-fx-background-color: #D9CBC1; -fx-background-radius: 25; -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;" text="Peminjaman" HBox.hgrow="ALWAYS" />
+
+                    <Button fx:id="btnLaporan" maxWidth="Infinity" onAction="#handleLaporan" prefHeight="50" style="-fx-background-color: #D9CBC1; -fx-background-radius: 25; -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;" text="Lapor" HBox.hgrow="ALWAYS" />
+
+                    <Button fx:id="btnBarang" maxWidth="Infinity" onAction="#handleBarang" prefHeight="50" style="-fx-background-color: #D9CBC1; -fx-background-radius: 25; -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;" text="Data Barang" HBox.hgrow="ALWAYS" />
+                    
+                    <Button fx:id="btnUser" maxWidth="Infinity" onAction="#handleUser" prefHeight="50" style="-fx-background-color: #D9CBC1; -fx-background-radius: 25; -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;" text="Kelola" HBox.hgrow="ALWAYS" />
+                    
+                    <Button fx:id="btnLapor" maxWidth="Infinity" onAction="#handleLapor" prefHeight="50" style="-fx-background-color: #D9CBC1; -fx-background-radius: 25; -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;" text="Laporan" HBox.hgrow="ALWAYS" />
+                    
+                    <Button fx:id="btnBerita" maxWidth="Infinity" onAction="#handleBerita" prefHeight="50" style="-fx-background-color: #D9CBC1; -fx-background-radius: 25; -fx-font-weight: bold; -fx-font-size: 16px; -fx-cursor: hand;" text="Berita" HBox.hgrow="ALWAYS" />
+                </HBox>
+
+
+    <Region prefWidth="20" />
+
+    <Button onAction="#handleRefresh" prefHeight="40" prefWidth="40" style="-fx-background-color: #6A5436; -fx-text-fill: white; -fx-background-radius: 10; -fx-cursor: hand; -fx-font-size: 16px;" text="🔄">
+        <tooltip>
+            <Tooltip text="Refresh Halaman" />
+        </tooltip>
+    </Button>
+</HBox>
+
+                <StackPane fx:id="contentArea" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+                     <Label style="-fx-font-size: 24px; -fx-text-fill: #6A5436;" text="Selamat Datang di SIMAK" />
+                </StackPane>
+
+            </VBox>
+        </ScrollPane>
+    </center>
+</BorderPane>
